@@ -28,7 +28,7 @@ public class OrderService {
 
     private final ModelMapper modelMapper;
     private final OrderRepository orderRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
     @Transactional
     public Order createOrder(OrderDTO orderDTO) throws Exception {
@@ -48,8 +48,8 @@ public class OrderService {
                 .map(OrderLineItems::getSkuCode)
                 .toList();
 
-        InventoryResponse[] result = webClient.get()
-                .uri("http://localhost:8082/inventory-service/inventory",
+        InventoryResponse[] result = webClientBuilder.build().get()
+                .uri("http://inventory-service/inventory-service/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", listSkus).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
